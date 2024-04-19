@@ -1,0 +1,9 @@
+name: Popup Entity
+type: module
+description: Add entities of popups.
+package: Popup
+core_version_requirement: ^10
+
+dependencies:
+  - drupal:options
+  - drupal:user
