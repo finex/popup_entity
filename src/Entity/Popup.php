@@ -296,11 +296,19 @@ class Popup extends ContentEntityBase implements PopupInterface {
       ])
       ->setDefaultValue(0);
 
+    $fields['max_width'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Max width'))
+      ->setDescription(t('Max popup width in px.'))
+      ->setDisplayOptions('form', [
+        'weight' => 7,
+      ])
+      ->setDefaultValue(0);
+
     $fields['height'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Height'))
       ->setDescription(t('Pop height in %. 0 = auto.'))
       ->setDisplayOptions('form', [
-        'weight' => 7,
+        'weight' => 8,
       ])
       ->setDefaultValue(0);
 
@@ -314,7 +322,7 @@ class Popup extends ContentEntityBase implements PopupInterface {
         ],
       ])
       ->setDisplayOptions('form', [
-        'weight' => 8,
+        'weight' => 9,
       ])
       ->setDefaultValue('center');
 
@@ -328,7 +336,7 @@ class Popup extends ContentEntityBase implements PopupInterface {
         ],
       ])
       ->setDisplayOptions('form', [
-        'weight' => 9,
+        'weight' => 10,
       ])
       ->setDefaultValue('middle');
 
@@ -337,7 +345,7 @@ class Popup extends ContentEntityBase implements PopupInterface {
       ->setDescription(t('Time in milliseconds that the popup will wait before opening'))
       ->setDisplayOptions('form', [
         'type' => 'number',
-        'weight' => 10,
+        'weight' => 11,
       ])
       ->setDefaultValue(0);
 
@@ -346,7 +354,7 @@ class Popup extends ContentEntityBase implements PopupInterface {
       ->setDescription(t('Number of times that you have to close to stop showing the popup.'))
       ->setDisplayOptions('form', [
         'type' => 'number',
-        'weight' => 11,
+        'weight' => 12,
       ])
       ->setDefaultValue(1);
 
@@ -356,7 +364,7 @@ class Popup extends ContentEntityBase implements PopupInterface {
       ->setDisplayOptions('form', [
         'type' => 'number',
         'min' => 1,
-        'weight' => 11,
+        'weight' => 13,
       ])
     // 1week
       ->setDefaultValue(10080);
@@ -365,7 +373,7 @@ class Popup extends ContentEntityBase implements PopupInterface {
       ->setLabel(t('Active'))
       ->setDescription(t('This popup is published and active'))
       ->setDisplayOptions('form', [
-        'weight' => 12,
+        'weight' => 14,
       ])
       ->setDefaultValue(TRUE);
 

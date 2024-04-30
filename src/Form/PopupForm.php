@@ -35,6 +35,9 @@ class PopupForm extends ContentEntityForm {
     $popup_form['display']['width'] = $form['width'];
     $popup_form['display']['width']['widget'][0]['value']['#min'] = 0;
     unset($form['width']);
+    $popup_form['display']['max_width'] = $form['max_width'];
+    $popup_form['display']['max_width']['widget'][0]['value']['#min'] = 0;
+    unset($form['max_width']);
     $popup_form['display']['height'] = $form['height'];
     $popup_form['display']['height']['widget'][0]['value']['#min'] = 0;
     unset($form['height']);

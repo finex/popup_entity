@@ -1,0 +1,25 @@
+<?php
+
+use Drupal\Core\Field\BaseFieldDefinition;
+
+/**
+ * @file
+ * Install, update and uninstall functions for the popup_entity module.
+ */
+
+/**
+ * Add new custom fields on popup_entity.
+ */
+function popup_entity_update_10001() {
+  $storage_definition = BaseFieldDefinition::create('integer')
+    ->setLabel(t('Max width'))
+    ->setDescription(t('Max popup width in px.'))
+    ->setDisplayOptions('form', [
+      'weight' => 7,
+    ])
+    ->setDefaultValue(0);
+
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('max_width', 'popup_entity_popup', 'popup_entity_popup', $storage_definition);
+}

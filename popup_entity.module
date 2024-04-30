@@ -5,6 +5,7 @@
  * Contains popup_entity.module.
  */
 
+use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Cache\Cache;
@@ -40,9 +41,15 @@ function template_preprocess_popup_entity_popup(&$variables) {
 
   // Add css styles.
   $variables['attributes'] = new Attribute($variables['attributes']);
+  $variables['inner_attributes'] = [];
+  $variables['inner_attributes'] = new Attribute($variables['inner_attributes']);
   $width = $popup_entity_popup->get('width')->value;
   if (!empty($width)) {
     $style[] = 'width: ' . $width . '%';
+  }
+  $max_width = $popup_entity_popup->get('max_width')->value;
+  if (!empty($max_width)) {
+    $inner_style[] = 'max-width: ' . $max_width . 'px';
   }
   $height = $popup_entity_popup->get('height')->value;
   if (!empty($height)) {
@@ -50,6 +57,11 @@ function template_preprocess_popup_entity_popup(&$variables) {
   }
   if (!empty($style)) {
     $variables['attributes']->setAttribute('style', implode('; ', $style));
+  }
+
+
+  if (!empty($inner_style)) {
+    $variables['inner_attributes']->setAttribute('style', implode('; ', $inner_style));
   }
 
   $position_x = $popup_entity_popup->get('position_x')->value;
@@ -112,35 +124,63 @@ function popup_entity_theme_suggestions_popup_entity_popup(array $variables) {
  * Implements hook_page_bottom().
  */
 function popup_entity_page_bottom(array &$page_bottom) {
-  // Get all ids of active popups.
-  $query = \Drupal::entityQuery('popup_entity_popup');
-  $query->condition('status', 1);
-  $query->accessCheck(TRUE);
-  $entity_ids = $query->execute();
 
-  // Load all popups.
-  $popup_storage = \Drupal::entityTypeManager()->getStorage('popup_entity_popup');
-  $popups = $popup_storage->loadMultiple($entity_ids);
 
-  $original_popups = $popups;
-  // Check visibility.
-  foreach ($original_popups as $popup_id => $popup) {
-    // TODO: Implement custom visibility logic.
-    $is_visible = true;
-    if (!$is_visible) {
-      unset($popups[$popup_id]);
+  if (!(\Drupal::service('router.admin_context')->isAdminRoute())) {
+    // Get all ids of active popups.
+    $query = \Drupal::entityQuery('popup_entity_popup');
+    $query->condition('status', 1);
+    $query->accessCheck(TRUE);
+    $entity_ids = $query->execute();
+
+    // Load all popups.
+    $popup_storage = \Drupal::entityTypeManager()->getStorage('popup_entity_popup');
+    $popups = $popup_storage->loadMultiple($entity_ids);
+
+    $original_popups = $popups;
+    // Check visibility.
+    foreach ($original_popups as $popup_id => $popup) {
+      // TODO: Implement custom visibility logic.
+      $is_visible = true;
+      if (!$is_visible) {
+        unset($popups[$popup_id]);
+      }
+    }
+
+    $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+
+    // Load render array.
+    $view_builder = \Drupal::entityTypeManager()->getViewBuilder('popup_entity_popup');
+    $popups_render = $view_builder->viewMultiple($popups, 'full', $langcode);
+
+    // Set bottom html.
+    if (!empty($popups)) {
+      $page_bottom['popup_entity'] = $popups_render;
     }
   }
 
-  $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+}
 
-  // Load render array.
-  $view_builder = \Drupal::entityTypeManager()->getViewBuilder('popup_entity_popup');
-  $popups_render = $view_builder->viewMultiple($popups, 'full', $langcode);
 
-  // Set bottom html.
-  if (!empty($popups)) {
-    $page_bottom['popup_entity'] = $popups_render;
+
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function popup_entity_entity_base_field_info(\Drupal\Core\Entity\EntityTypeInterface $entity_type){
+
+  $fields = [];
+
+  if($entity_type->id() == 'popup_entity_popup'){
+    $fields['max_width'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Max width'))
+      ->setDescription(t('Max popup width in px.'))
+      ->setDisplayOptions('form', [
+        'weight' => 7,
+      ])
+      ->setDefaultValue(0);
+
   }
 
+  return $fields;
 }
